@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import MarkdownRenderer from '../components/MarkdownRenderer'
 import { getPost, formatDate } from '../lib/posts'
@@ -5,6 +6,18 @@ import { getPost, formatDate } from '../lib/posts'
 export default function Post() {
   const { slug } = useParams()
   const post = slug ? getPost(slug) : undefined
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement
+      const total = h.scrollHeight - h.clientHeight
+      setProgress(total > 0 ? (h.scrollTop / total) * 100 : 0)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   if (!post) {
     return (
@@ -21,6 +34,8 @@ export default function Post() {
 
   return (
     <>
+      <div className="reading-progress" style={{ width: `${progress}%` }} />
+
       <section className="post-hero">
         <div className="container">
           <div className="post-meta" style={{ color: 'rgba(255,253,247,0.6)' }}>

@@ -17,6 +17,9 @@ export default function PostCard({ post, index = 0 }: { post: Post; index?: numb
         </div>
         <h3 className="post-card-title">{post.title}</h3>
         <p className="post-card-excerpt">{post.excerpt}</p>
+        <span className="post-card-more">
+          阅读全文 <span className="arr">→</span>
+        </span>
       </div>
     </Link>
   )

@@ -17,7 +17,7 @@ export interface Post {
 const files = import.meta.glob('../posts/**/*.md', { query: '?raw', import: 'default', eager: true })
 
 function parsePost(path: string, raw: string): Post {
-  const slug = path.replace('../posts/', '').replace(/\.md$/, '')
+  const slug = path.split('/').pop()!.replace(/\.md$/, '')
   const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   let meta: Record<string, unknown> = {}
   let content = raw

@@ -1,9 +1,11 @@
-import { NavLink, Route, Routes, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, Route, Routes, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Blog from './pages/Blog'
 import Post from './pages/Post'
 import Gallery from './pages/Gallery'
 import About from './pages/About'
+import CursorGlow from './components/CursorGlow'
 
 const nav = [
   { to: '/', label: '首页' },
@@ -13,8 +15,33 @@ const nav = [
 ]
 
 export default function App() {
+  const location = useLocation()
+
+  // 滚动入场动画：进入视口时给 .reveal 加上 .is-visible
+  useEffect(() => {
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'))
+      return
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible')
+            io.unobserve(e.target)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+    )
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [location.pathname])
+
   return (
     <div className="site">
+      <CursorGlow />
+
       <header className="site-header">
         <div className="header-inner">
           <Link to="/" className="brand">
@@ -56,7 +83,28 @@ export default function App() {
           <span className="footer-note">弧线与代码 · 用技术与热爱投出每一记好球 · GitHub Pages</span>
         </div>
       </footer>
+
+      <BackToTop />
     </div>
+  )
+}
+
+function BackToTop() {
+  const [show, setShow] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 400)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  return (
+    <button
+      className={`back-top${show ? ' show' : ''}`}
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label="返回顶部"
+    >
+      ↑
+    </button>
   )
 }
 

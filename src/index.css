@@ -842,22 +842,198 @@ h1, h2, h3, h4 {
 }
 
 /* ============================================================
-   动画
+   动画与交互
    ============================================================ */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0s);
+  will-change: opacity, transform;
 }
 
-.reveal {
-  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: var(--d, 0s);
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* 记分牌跑马灯 */
+.ticker {
+  margin-top: 44px;
+  border-top: 1px solid rgba(255, 253, 247, 0.16);
+  border-bottom: 1px solid rgba(255, 253, 247, 0.16);
+  background: rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 26s linear infinite;
+}
+
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+.ticker-item {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 253, 247, 0.8);
+  padding: 14px 24px;
+  white-space: nowrap;
+}
+
+.ticker-item .dot {
+  color: var(--orange);
+  font-size: 11px;
+  margin-left: 24px;
+  vertical-align: middle;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* 卡片悬停：图片缩放 + 发光 + 标题变色 + 阅读提示 */
+.post-card {
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.post-card:hover {
+  transform: none;
+  box-shadow: 0 26px 64px rgba(22, 17, 13, 0.22);
+  border-color: rgba(240, 101, 31, 0.45);
+}
+
+.post-card-cover {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.post-card:hover .post-card-cover {
+  transform: scale(1.07);
+}
+
+.post-card-title {
+  transition: color 0.25s;
+}
+
+.post-card:hover .post-card-title {
+  color: var(--orange-deep);
+}
+
+.post-card-more {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
+
+.post-card-more .arr {
+  display: inline-block;
+  transition: transform 0.25s;
+}
+
+.post-card:hover .post-card-more .arr {
+  transform: translateX(5px);
+}
+
+/* 阅读进度条 */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--orange), var(--gold));
+  z-index: 200;
+  box-shadow: 0 0 12px rgba(240, 101, 31, 0.55);
+}
+
+/* 返回顶部 */
+.back-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--cream);
+  border: 1px solid var(--line-strong);
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s, background 0.3s;
+  z-index: 90;
+}
+
+.back-top.show {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.back-top:hover {
+  background: var(--orange);
+  transform: translateY(-3px);
+}
+
+/* 光标光晕 */
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--orange);
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.2s, height 0.2s, opacity 0.2s;
+  will-change: transform;
+}
+
+.cursor-glow.is-hover {
+  width: 30px;
+  height: 30px;
+  opacity: 0.35;
+}
+
+/* 导航下划线微交互 */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 0;
+  height: 2px;
+  background: var(--orange);
+  border-radius: 2px;
+  transition: width 0.25s, left 0.25s;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 55%;
+  left: 22.5%;
 }
 
 /* ============================================================
